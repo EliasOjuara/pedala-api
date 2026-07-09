@@ -1,45 +1,54 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { UsuarioRequestDto } from './dto/usuario_request.dto';
+import { UsuarioModel } from './usuario.model';
+import { InjectRepository } from '@nestjs/typeorm';
+import { privateDecrypt } from 'crypto';
+import { Repository } from 'typeorm';
+import { UsuarioEditarRequestDto } from './dto/usuario_editar_request.dto';
 
 @Injectable()
 export class UsuarioService {    
-    private usuarios:any = [
-        {
-            nome: "José Antônio",
-            email: "jose@mail.com",
-            telefone: "(86) 9.9988-0055"
-        },
-        {
-            nome: "Maria José",
-            email: "mjose@mail.com",
-            telefone: "(86) 9.9988-5544"
-        }
-    ]
+     constructor(
+        @InjectRepository(UsuarioModel)
+        private readonly usuarioRepository:Repository<UsuarioModel>
+    ){}
 
-    salvarUsuario(dto: UsuarioRequestDto){
-        const usuario = this.usuarios.find(u => u.email === dto.email)
-        if(usuario) throw new BadRequestException(`Usuário ja cadastrado com email ${dto.email}`)
-        this.usuarios.push(dto)
+    async salvarUsuario(dto: UsuarioRequestDto): Promise<void> {
+        const existeUsuario = await this.usuarioRepository.findOne({
+            where: {
+                email: dto.email
+            }
+        })
+
+        if (existeUsuario) throw new BadRequestException(`Usuário ja 
+            cadastrado com este email`)
+
+        await this.usuarioRepository.save(dto)
+    }
+
+    async listarUsuario(): Promise<UsuarioModel[]> {
+        return await this.usuarioRepository.find()
+    }
+
+    async buscarUsuarioPeloEmail(email:string): Promise<UsuarioModel | null> {
+        return await this.usuarioRepository.findOne({
+            where: {
+                email: email
+            }
+        })
+    }
+
+    async buscarUsuarioPorId(id: number): Promise<UsuarioModel> {
+        const usuario = await this.usuarioRepository.findOne({
+            where: { id: id as any }
+        });
+        if (!usuario) {
+            throw new NotFoundException(`Usuário com o ID ${id} não foi encontrado`);
+        }
+        return usuario;
     }
     
-    listarUsuario() {
-        return this.usuarios
+    async editar(id:string, dto:UsuarioEditarRequestDto): Promise<void>{
+        await this.usuarioRepository.update({id}, dto)
     }
-
-    buscarUsuarioPeloEmail(email:string) {
-        const usuario = this.usuarios
-        . find(u => u.email === email)
-
-        if (usuario === null || usuario === undefined) {
-            throw new NotFoundException("Usuário não encontrado!")
-        }
-
-        return usuario
-    }
-
-    removerUsuario(email:string){
-        const index = this.usuarios.findIndex(u => u.email === email)
-        this.usuarios.splice(index, 1)
-    }
-        
 }
