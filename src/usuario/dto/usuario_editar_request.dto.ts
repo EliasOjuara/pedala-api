@@ -1,4 +1,4 @@
-import { IsOptional } from "@nestjs/common"
+import { IsOptional } from "class-validator"
 import { IsPhoneNumber, MinLength } from "class-validator"
 
 export class UsuarioEditarRequestDto {
