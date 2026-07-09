@@ -1,5 +1,15 @@
+import { IsEmail, IsNotEmpty, IsPhoneNumber, MinLength } from "class-validator";
+
 export class UsuarioRequestDto {
+    
+    @IsNotEmpty()
+    @MinLength(6)
     nome:string
-    email:string
-    telefone:string
+    
+    @IsEmail()
+    email: string
+
+    @IsPhoneNumber("BR")
+    @IsNotEmpty()
+    contato:string
 }

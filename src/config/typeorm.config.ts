@@ -9,6 +9,7 @@ const options: TypeOrmModuleOptions & DataSourceOptions = {
   username: "postgres",
   password: "102030",
   database: "pedaladb",
+  autoLoadEntities: true,
 
   //entities: [`${__dirname}/../modules/**/*.model{.js,.ts}`],
   migrations: [
