@@ -10,8 +10,6 @@ const options: TypeOrmModuleOptions & DataSourceOptions = {
   password: "102030",
   database: "pedaladb",
   autoLoadEntities: true,
-
-  //entities: [`${__dirname}/../modules/**/*.model{.js,.ts}`],
   migrations: [
     join(__dirname, '..', 'database', 'migrations', '*{.ts,.js}'),
   ],
