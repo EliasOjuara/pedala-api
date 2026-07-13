@@ -1,6 +1,6 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class CriarTabelaEstacoes1783601366000 implements MigrationInterface {
+export class CriarTabelaEstacoes1783601332120 implements MigrationInterface {
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`
@@ -9,12 +9,13 @@ export class CriarTabelaEstacoes1783601366000 implements MigrationInterface {
                 nm_estacao VARCHAR(150) NOT NULL UNIQUE,
                 capacidade INTEGER NOT NULL DEFAULT 1,
                 ativa BOOLEAN NOT NULL DEFAULT false,
-                dt_criacao TIMESTAMP NOT NULL DEFAULT 'now()'
-            )    
+                dt_criacao TIMESTAMP DEFAULT 'now()'
+            )        
         `)
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
+        await queryRunner.dropTable('estacoes')
     }
 
 }

@@ -1,11 +1,15 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class CreateUuidExtension1783428925466 implements MigrationInterface {
+export class CreateUuidExtension1783427266529 implements MigrationInterface {
 
     public async up(queryRunner: QueryRunner): Promise<void> {
+         await queryRunner.query(`CREATE EXTENSION IF NOT EXISTS "pgcrypto";`)   
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
+        await queryRunner.query(`
+            DROP EXTENSION IF EXISTS "pgcrypto";
+        `);
     }
 
 }
