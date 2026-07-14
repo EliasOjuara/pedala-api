@@ -1,11 +1,10 @@
-import { Entity, PrimaryGeneratedColumn } from "typeorm";
-
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm"
 
 @Entity("marcas")
 export class MarcaModel {
-    @PrimaryGeneratedColum('uuid')
+    @PrimaryGeneratedColumn('uuid')
     id: string
 
-    @Colum({name: "nome"})
+    @Column({ name: "nome" })
     nomeMarca: string
 }
