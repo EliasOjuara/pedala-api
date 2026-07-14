@@ -1,14 +1,14 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { UsuarioRequestDto } from './dto/usuario_request.dto';
-import { UsuarioModel } from './usuario.model';
-import { InjectRepository } from '@nestjs/typeorm';
-import { privateDecrypt } from 'crypto';
 import { Repository } from 'typeorm';
+import {UsuarioModel} from './usuario.model'
+import { InjectRepository } from '@nestjs/typeorm';
 import { UsuarioEditarRequestDto } from './dto/usuario_editar_request.dto';
 
 @Injectable()
-export class UsuarioService {    
-     constructor(
+export class UsuarioService {
+
+    constructor(
         @InjectRepository(UsuarioModel)
         private readonly usuarioRepository:Repository<UsuarioModel>
     ){}
@@ -31,24 +31,31 @@ export class UsuarioService {
     }
 
     async buscarUsuarioPeloEmail(email:string): Promise<UsuarioModel | null> {
-        return await this.usuarioRepository.findOne({
+      return await this.usuarioRepository.findOne({
             where: {
                 email: email
             }
         })
     }
 
-    async buscarUsuarioPorId(id: number): Promise<UsuarioModel> {
-        const usuario = await this.usuarioRepository.findOne({
-            where: { id: id as any }
-        });
-        if (!usuario) {
-            throw new NotFoundException(`Usuário com o ID ${id} não foi encontrado`);
-        }
-        return usuario;
+    // async buscarUsuarioPeloId(id:string): 
+    // Promise<UsuarioModel> {
+    //   const usuario = await this.usuarioRepository.findOneBy({
+    //     id: id
+    //   })
+
+    //   if(!usuario) throw new BadRequestException("Usuario não encontrado!")
+    //   return usuario  
+    // }
+    async buscarUsuarioPeloId(id:string): 
+    Promise<UsuarioModel> {
+      return await this.usuarioRepository.findOneByOrFail({
+        id
+      })  
     }
-    
-    async editar(id:string, dto:UsuarioEditarRequestDto): Promise<void>{
-        await this.usuarioRepository.update({id}, dto)
+
+    async editar(id:string, dto: UsuarioEditarRequestDto):Promise<void>{
+        console.log('**** ', dto)
+        const result = await this.usuarioRepository.update(id, dto)
     }
 }
