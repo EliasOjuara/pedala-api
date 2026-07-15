@@ -1,20 +1,17 @@
-import { Column, CreateDateColumn, Entity, 
-    PrimaryGeneratedColumn } from "typeorm"
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm"
 
 @Entity("estacoes")
 export class EstacaoModel {
-    @PrimaryGeneratedColumn('uuid')
+    
+    @PrimaryGeneratedColumn("uuid")
     id:string
 
-    @Column({name: 'nm_estacao'})
-    nome:string //nome_estacao
-    
+    @Column({ name: "nome"})
+    nomeEstacao: string
+
     @Column()
-    capacidade:number
-    
+    capacidade: number
+
     @Column()
-    ativa:boolean
-    
-    @CreateDateColumn({name: 'dt_criacao'})
-    dataCriacao: Date
+    ativa: boolean
 }

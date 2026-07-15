@@ -3,6 +3,7 @@ import { EstacaoModel } from './estacao.model';
 import { ILike, Like, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EstacaoRequestDto } from './dto/estacao_request.dto';
+import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
 @Injectable()
 export class EstacoesService {
