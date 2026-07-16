@@ -1,5 +1,8 @@
+import { EstacaoModel } from "src/estacoes/estacao.model"
 import { ModeloModel } from "src/modelo/modelo.model"
 import { Column, CreateDateColumn, Entity, JoinColumn, ManyToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm"
+import { ManyToOne } from "typeorm/browser"
+import { StatusEstacao } from "./status_estacao.enum"
 
 @Entity("bicicletas")
 export class BicicletaModel {
@@ -11,8 +14,15 @@ export class BicicletaModel {
     @JoinColumn({ name: "modelo_id" })
     modelo: ModeloModel
  
-    @Column()
-    status: boolean
+    @Column({
+        type: 'enum',
+        enum:StatusEstacao,
+        default: StatusEstacao.DISPONIVEL})
+    status: StatusEstacao // EM_USO, DISPONIVEL, EM_MANUTENCAO, INATIVA
+
+    @ManyToOne(() => EstacaoModel)
+    @JoinColumn({name: "estacao_id"})
+    lotacao: EstacaoModel
 
     @CreateDateColumn({ name: "dt_cadastro", update: false})
     dataCadastro: Date

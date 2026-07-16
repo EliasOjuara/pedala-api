@@ -16,8 +16,15 @@ export class ModeloController {
     }
 
     @Get()
-    async carregarModelos():Promise<ModeloModel[] | null>{
-        return null
+    async carregarModelos(@Query('marca') marca?: string):Promise<ModeloModel[] | null>{
+        let modelos
+
+        if(marca) {
+            modelos = await this.modeloService.carregarModeloPelaMarca(marca)
+        } else {
+            modelos = await this.modeloService.carregaModelos()
+        }
+        return modelos
     }
 
     @Get("/marcas")
