@@ -39,8 +39,8 @@ export class ModeloService {
         })
 
         return modelos.map(mo => ({
-            modeloId: mo.id,
-            nomeModelo: mo.nomeModelo,
+            id: mo.id,
+            modelo: mo.nomeModelo,
             marca: mo.marca.nomeMarca 
         }))
     }
@@ -57,11 +57,11 @@ export class ModeloService {
         }
      })   
 
-        return modelos.map(mo => ({
-            modeloId: mo.id,
-            nomeModelo: mo.nomeModelo,
-            marca: mo.marca.nomeMarca
-        }))
+     return modelos.map(modelo => ({
+        id: modelo.id,
+        modelo: modelo.nomeModelo,
+        marca: modelo.marca.nomeMarca
+     }))
     }
 
     async carregarModeloPeloId(modeloId: string): Promise<ModeloModel> {
@@ -70,7 +70,7 @@ export class ModeloService {
         })
 
         if (!modelo) throw new NotFoundException("Modelo não encontrado!")
-
-            return modelo
+        
+        return modelo
     }
 }

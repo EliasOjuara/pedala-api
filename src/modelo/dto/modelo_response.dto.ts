@@ -1,5 +1,5 @@
 export class ModeloResponseDto {
-    modeloId:string
-    nomeModelo:string
+    id:string
+    modelo:string
     marca:string
 }
