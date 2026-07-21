@@ -4,10 +4,10 @@ import { Column, Entity, PrimaryGeneratedColumn } from "typeorm"
 export class EstacaoModel {
     
     @PrimaryGeneratedColumn("uuid")
-    id:string
+    id:string;
 
     @Column({ name: "nome"})
-    nomeEstacao: string
+    nome: string
 
     @Column()
     capacidade: number
