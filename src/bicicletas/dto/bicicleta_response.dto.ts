@@ -8,6 +8,6 @@ export class BicicletaResponseDto {
 
     @IsEnum(StatusEstacao)
     status:StatusEstacao
-
+    
     estacaoAtual:string
 }
