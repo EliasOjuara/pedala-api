@@ -9,7 +9,7 @@ import { startWith } from 'rxjs';
 export class UsuarioController {
   constructor(private readonly usuarioService:UsuarioService){}
 
-  // http://localhost:3000/usuarios
+  // http://localhost:3001/usuarios
   @Get()
   async todosUsuarios():Promise<UsuarioModel[]>{
     return await this.usuarioService.listarUsuario()
@@ -21,7 +21,7 @@ export class UsuarioController {
     return await this.usuarioService.buscarUsuarioPeloEmail(email)
   }
 
-  // http://localhost:3000/usuarios?email=mjose@mail.com
+  // http://localhost:3001/usuarios?email=mjose@mail.com
   @Get("/buscar")
   buscarUsuarioPeloEmail(@Query("email") email:string){
     return this.usuarioService.buscarUsuarioPeloEmail(email)

@@ -1,5 +1,4 @@
-import { IsOptional } from "class-validator"
-import { IsPhoneNumber, MinLength } from "class-validator"
+import { IsOptional, IsPhoneNumber, MinLength } from "class-validator"
 
 export class UsuarioEditarRequestDto {
     @MinLength(6)
@@ -8,5 +7,5 @@ export class UsuarioEditarRequestDto {
 
     @IsPhoneNumber('BR')
     @IsOptional()
-    contato:string
+    contato: string
 }
