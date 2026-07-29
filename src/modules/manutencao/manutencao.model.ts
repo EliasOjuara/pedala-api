@@ -21,7 +21,6 @@ export class ManutencaoModel {
     @JoinColumn({name: "responsavel_id"})
     responsavel: UsuarioModel //ADMIN
 
-
     @Column({ type: 'text', nullable: false })
     descricao: string
     
@@ -34,7 +33,7 @@ export class ManutencaoModel {
     statusManutencao: StatusManutencao
 
     @Column({ type: 'text', nullable: true })
-    observacoes: string
+    observacoes?: string
 
     @CreateDateColumn({ name: "dt_abertura", nullable: false, update: false})
     abertaEm: Date
