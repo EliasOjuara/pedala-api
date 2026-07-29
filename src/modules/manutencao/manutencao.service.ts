@@ -9,6 +9,7 @@ import { StatusManutencao } from './status_manutencao.enum';
 import { UsuarioPapel } from '../usuario/papel.enun';
 import { ManutencaoRequestDto } from './dto/manutencao_request.dto';
 import { ManutencaoResponseDto } from './dto/manutencao_response.dto';
+import { EditarManutencaoRequestDto } from './dto/editar_manutencao_request.dto';
 
 @Injectable()
 export class ManutencaoService {
@@ -44,15 +45,16 @@ export class ManutencaoService {
         await this.manutencaoRepository.save(manutencao)
     }
    
-    async atualizarManutencao(idManutencao:string, idTecnico: string, 
-        status: StatusManutencao, observacoes?: string)
+    async atualizarManutencao(
+        idManutencao:string, 
+        request: EditarManutencaoRequestDto)
     :Promise<void> {
         const manutencao = await this.manutencaoRepository.findOneBy({
             id: idManutencao
         })
 
         const tecnico = await this.usuarioService
-            .buscarUsuarioPeloId(idTecnico)
+            .buscarUsuarioPeloId(request.idTecnico)
 
         if (!manutencao) 
             throw new BadRequestException(`Nenhuma manutenção 
@@ -64,8 +66,8 @@ export class ManutencaoService {
             manutencao.statusManutencao = StatusManutencao.EM_ANDAMENTO
             manutencao.tecnico = tecnico
         } else {
-            manutencao.statusManutencao = status || StatusManutencao.EM_ANDAMENTO
-            manutencao.observacoes = observacoes
+            manutencao.statusManutencao = request.status || StatusManutencao.EM_ANDAMENTO
+            manutencao.observacoes = request.observacoes
         }
 
         await this.manutencaoRepository.update(manutencao.id, manutencao)
@@ -82,7 +84,72 @@ export class ManutencaoService {
             }
         })
 
-        return manutencoes.map(m => ({
+        return manutencoes.map(m => this.converterModelEmResponse(m))
+    }
+
+    async buscarManutencaoPeloBicicleta(bicicletaId: string):Promise<ManutencaoResponseDto> {
+        const manutencao =  await this.manutencaoRepository.findOne({
+            where: {
+                bicicleta: {
+                    id: bicicletaId
+                }
+            },
+            relations: {
+                bicicleta: {
+                    lotacao: true
+                },
+                tecnico: true,
+                responsavel: true
+            }
+        })
+        if(!manutencao)  throw new BadRequestException(`
+            Nenhuma bicicleta em manutenção encontrada este id
+        `)   
+        return this.converterModelEmResponse(manutencao)
+    }
+    
+    async buscarManutencaoPorId(idManutencao:string):Promise<ManutencaoResponseDto> {
+             const manutencao =  await this.manutencaoRepository.findOne({
+            where: {
+                id: idManutencao
+            },
+            relations: {
+                bicicleta: {
+                    lotacao: true
+                },
+                tecnico: true,
+                responsavel: true
+            }
+        })
+        if(!manutencao)  throw new BadRequestException(`
+            Nenhuma manutenção encontrada este id
+        `)   
+        return this.converterModelEmResponse(manutencao)
+    }
+    
+    async solicitacaoPeloUsuarioAdmin(usuarioId: string):Promise<ManutencaoResponseDto> {
+             const manutencao =  await this.manutencaoRepository.findOne({
+            where: {
+                responsavel: {
+                    id: usuarioId
+                }
+            },
+            relations: {
+                bicicleta: {
+                    lotacao: true
+                },
+                tecnico: true,
+                responsavel: true
+            }
+        })
+        if(!manutencao)  throw new BadRequestException(`
+            Nenhuma bicicleta em manutenção encontrada este id
+        `)   
+        return this.converterModelEmResponse(manutencao)
+    }
+
+    converterModelEmResponse(m:ManutencaoModel):ManutencaoResponseDto {
+        return {
             id: m.id,
             responsavel: m.responsavel.nome,
             tecnicoResponsavel: m.tecnico?.nome,
@@ -91,13 +158,6 @@ export class ManutencaoService {
             observacoes: m.observacoes,
             dataRegistro: m.abertaEm,
             dataFinalizada: m.finalizadaEm            
-        }))
+        }
     }
-
-    async buscarManutencaoPeloBicicleta(bicicletaId: string):Promise<void> {}
-    
-    async buscarManutencaoPorId(idManutencao:string):Promise<void> {}
-    
-    async solicitacaoPeloUsuarioAdmin(usuarioId: string):Promise<void> {}
-
 }
