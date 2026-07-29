@@ -2,10 +2,11 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { BicicletaModel } from './bicicleta.model';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ModeloService } from 'src/modelo/modelo.service';
-import { EstacoesService } from 'src/estacoes/estacoes.service';
+import { EstacoesService } from 'src/modules/estacoes/estacoes.service';
 import { BicicletaRequestDto } from './dto/bicicleta_request.dto';
 import { BicicletaResponseDto } from './dto/bicicleta_response.dto';
+import { ModeloService } from '../modelo/modelo.service';
+import { StatusEstacao } from './status_estacao.enum';
 
 @Injectable()
 export class BicicletasService {
@@ -45,9 +46,14 @@ export class BicicletasService {
         await this.bicicletaRepository.save(bicicleta)
     }
 
+    async atualizarStatus(idBicicleta:string, status: StatusEstacao): Promise<void> {
+        await this.bicicletaRepository.update(idBicicleta, { status })
+    }
+
     async contarTotalBicicletasPorEstacao(estacaoId: string):Promise<number> {
         return await this.bicicletaRepository.count({
             where: {
+                status: StatusEstacao.DISPONIVEL,
                 lotacao: {
                     id: estacaoId
                 }
@@ -68,6 +74,21 @@ export class BicicletasService {
         return bicicletas.map(b => this.converterModelEmResponse(b))
     }
 
+
+    async carregarBicicletaPeloId(bicicletaId: string):
+        Promise<BicicletaModel> {
+        const bicicleta = await this.bicicletaRepository
+                .findOne({
+                    where: { id: bicicletaId },
+                    relations: {
+                        lotacao: true
+                    }
+                })
+        if(!bicicleta) 
+            throw new BadRequestException("Bicicleta não encontrada")
+        return bicicleta    
+    } 
+
     converterModelEmResponse(bicicleta: BicicletaModel): BicicletaResponseDto {
         return ({
             id: bicicleta.id,
@@ -77,4 +98,6 @@ export class BicicletasService {
             status: bicicleta.status
         })
     }
+
+
 }
